@@ -314,11 +314,11 @@ XDM_updateplg()
 	[ -f XDM_UNleashed.plg.old ] && rm -f XDM_UNleashed.plg.old
 	mv XDM_UNleashed.plg XDM_UNleashed.plg.old
 	echo "Updating plugin"
-	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/XDM_UNleashed.plg
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/Unraid%205.x/XDM_UNleashed.plg
 	/usr/local/sbin/installplg /boot/config/plugins/XDM_UNleashed.plg
 	else
 	echo "Updating plugin"
-	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/XDM_UNleashed.plg
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/Unraid%205.x/XDM_UNleashed.plg
 	/usr/local/sbin/installplg /boot/config/plugins/XDM_UNleashed.plg
 	fi
 }
