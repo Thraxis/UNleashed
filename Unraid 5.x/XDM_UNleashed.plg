@@ -1,0 +1,699 @@
+<?xml version='1.0' standalone='yes'?>
+<PLUGIN>
+<!--
+
+This Plugin installs and controls XDM for UnRaid.
+All dependencies are installed as needed and everything is controlable from the webgui
+
+-->
+
+<FILE Name="/boot/packages/python-2.7.3-i686-5PTr.txz" Run="upgradepkg --install-new">
+<URL>--no-check-certificate https://copy.com/8Zye0EQw7L6sy72K/unrad-generic/python-2.7.3-i686-5PTr.txz</URL>
+<MD5>644b5f3f14e76aaa5b43f01a50d8defa</MD5>
+</FILE>
+<FILE Name="/boot/packages/sqlite-3.7.16-i686-1PTr.txz" Run="upgradepkg --install-new">
+<URL>--no-check-certificate https://copy.com/8Zye0EQw7L6sy72K/unrad-generic/sqlite-3.7.16-i686-1PTr.txz</URL>
+<MD5>104865e791d032e91a85d9c134b21be1</MD5>
+</FILE>
+<FILE Name="/boot/packages/openssl-solibs-0.9.8y-i486-1_slack13.37.txz" Run="upgradepkg --install-new">
+<URL>http://slackware.cs.utah.edu/pub/slackware/slackware-13.37/patches/packages/openssl-solibs-0.9.8y-i486-1_slack13.37.txz</URL>
+<MD5>5248a839148fa91de52361335dc051f5</MD5>
+</FILE>
+<FILE Name="/boot/packages/openssl-0.9.8y-i486-1_slack13.37.txz" Run="upgradepkg --install-new">
+<URL>http://slackware.cs.utah.edu/pub/slackware/slackware-13.37/patches/packages/openssl-0.9.8y-i486-1_slack13.37.txz</URL>
+<MD5>5195be05b85f5eb2bd4bf9ebf0a73ff9</MD5>
+</FILE>
+<FILE Name="/boot/packages/curl-7.35.0-i486-1_slack13.37" Run="upgradepkg --install-new">
+<URL>http://slackware.cs.utah.edu/pub/slackware/slackware-13.37/patches/packages/curl-7.35.0-i486-1_slack13.37.txz</URL>
+<MD5>0462c2439896e16dae20e4838f2e770b</MD5>
+</FILE>
+<FILE Name="/boot/packages/git-1.8.4-i486-1.txz" Run="upgradepkg --install-new">
+<URL>http://slackware.osuosl.org/slackware-14.1/slackware/d/git-1.8.4-i486-1.txz</URL>
+<MD5>77a2cbdaf2e93408f71d81521e2bee64</MD5>
+</FILE>
+
+<FILE Name="/boot/config/plugins/XDM/XDM.png">
+<URL>--no-check-certificate https://raw.github.com/lad1337/XDM/master/html/img/xdm-icon-w-background.120x120.png</URL>
+</FILE>
+
+<!-- clean up previous install -->
+<FILE Name="/tmp/XDM-cleanup" Run="/bin/bash">
+<INLINE>
+<![CDATA[
+rm -f /etc/rc.d/rc.XDM
+rm -f -R /usr/local/emhttp/plugins/XDM
+[ -f /boot/config/plugins/XDM/plgver.txt ] && rm -f /boot/config/plugins/XDM/plgver.txt
+rm /tmp/XDM-cleanup
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/boot/config/plugins/XDM/plgver.txt">
+<INLINE>
+<![CDATA[
+0.1
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/boot/config/plugins/XDM/XDM.cfg">
+<INLINE>
+<![CDATA[
+# XDM configuration
+SERVICE="disable"
+INSTALLDIR="/usr/local/XDM"
+DATADIR="/usr/local/XDM"
+PORT="8085"
+RUNAS="nobody"
+PLG_STORAGESIZE="yes"
+PLG_DATACHECK="yes"
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/usr/local/emhttp/plugins/webGui/unleashed.page">
+<INLINE>
+<![CDATA[
+Author="Thraxis"
+Version="1.0.0"
+Title="UNleashed PLG"
+Menu="Settings"
+Type="menu"
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/etc/rc.d/rc.XDM" Mode="0770">
+<INLINE>
+<![CDATA[
+#!/bin/sh
+# Start/stop/restart/enable/disable XDM.
+
+XDM_start()
+{
+	# no-op if not enabled
+	if [ $SERVICE != "enable" ]; then
+		sed -i "s/"disable"/"enable/"" $CONFIG	
+	fi
+
+	# no-op if already running
+	if [ -r /var/run/XDM/XDM-$PORT.pid ]; then
+		return
+	fi
+	
+	# if directory doesn't exist or XDM is not found, install it
+	if [[ "$INSTALLDIR" != "" &&  ! -e "$INSTALLDIR/XDM.py" ]]; then
+		XDM_install
+	fi
+	
+	if [ ! -d $DATADIR ]; then
+		mkdir $DATADIR
+        chown -R nobody:users $DATADIR
+	    chmod -R 777 $DATADIR
+	fi
+
+	CMDLINE="sudo -u $RUNAS python2.7 $INSTALLDIR/XDM.py -d -P $PORT --datadir $DATADIR --nolaunch --pidfile /var/run/XDM/XDM-$PORT.pid"
+	echo -n "Starting XDM:  $CMDLINE"
+	$CMDLINE
+	echo
+  
+	while [ ! -e /var/run/XDM/XDM-$PORT.pid  ]; do
+		sleep 1
+	done
+	echo "... OK"
+	sleep 1
+}
+
+XDM_stop()
+{
+	# no-op if not running
+	if [ ! -r /var/run/XDM/XDM-$PORT.pid ]; then
+		return
+	fi
+	
+	echo "Stopping XDM..."
+	sleep 1
+	kill $(cat /var/run/XDM/XDM-$PORT.pid)
+	sleep 3
+  
+	if [ -f /var/run/XDM/XDM-$PORT.pid ]; then
+		rm /var/run/XDM/XDM-$PORT.pid
+	fi
+  
+	while [ -e /var/run/XDM/XDM-$PORT.pid  ]; do
+		sleep 1
+	done
+	echo "... OK"
+	sleep 1
+}
+
+XDM_restart()
+{
+	XDM_stop
+	sleep 1
+	XDM_start
+}
+
+XDM_buttonstart()
+{
+echo "Enabling XDM"
+	CONFIG="/boot/config/plugins/XDM/XDM.cfg"
+	if [ -f $CONFIG ]; then
+		sed -i "s/"disable"/"enable/"" $CONFIG	
+		sleep 3
+		echo "Starting XDM"
+	XDM_start
+	fi
+}
+
+XDM_update()
+{
+	XDM_stop
+	sleep 1
+	XDM_install
+	sleep 1
+	XDM_start
+}
+
+write_config()
+{
+	echo "# XDM configuration" > /boot/config/plugins/XDM/XDM.cfg
+	echo "SERVICE=\"$SERVICE\"" >> /boot/config/plugins/XDM/XDM.cfg
+	echo "INSTALLDIR=\"$INSTALLDIR\"" >> /boot/config/plugins/XDM/XDM.cfg
+	echo "DATADIR=\"$DATADIR\"" >> /boot/config/plugins/XDM/XDM.cfg
+	echo "PORT=\"$PORT\"" >> /boot/config/plugins/XDM/XDM.cfg
+	echo "RUNAS=\"$RUNAS\"" >> /boot/config/plugins/XDM/XDM.cfg
+	echo "PLG_STORAGESIZE=\"$PLG_STORAGESIZE\"" >> /boot/config/plugins/XDM/XDM.cfg
+	echo "PLG_DATACHECK=\"$PLG_DATACHECK\"" >> /boot/config/plugins/XDM/XDM.cfg
+
+ }
+
+XDM_change_settings()
+{
+	PORT="$2"
+	INSTALLDIR="$3"
+	DATADIR="$4"
+	
+	if [ $DATADIR == "" ]; then
+		$DATADIR="$INSTALLDIR"
+	fi
+	
+	if [ $RUNAS != $1 ]; then
+		chown -R $1:users "$INSTALLDIR" "$DATADIR"
+	fi
+	
+	RUNAS="$1"
+	
+	PLG_STORAGESIZE="$5"
+	PLG_DATACHECK="$6"
+	
+	# create XDM user if necessary
+	if [[ $RUNAS != "nobody" && $RUNAS != "root" ]]; then
+		if ( ! grep -q ^$RUNAS /etc/passwd ); then
+	  		useradd -r -g users -d / -s /bin/false $RUNAS &> /dev/null
+	  		cp /etc/passwd /etc/shadow /boot/config
+		fi
+	fi
+}
+XDM_enable()
+{
+	# if not already enabled, enable it
+		SERVICE=enable
+		XDM_stop
+		XDM_change_settings $1 $2 $3 $4 $5 $6 $7 $8
+		write_config
+        XDM_start
+}
+
+XDM_disable()
+{
+	XDM_stop
+	SERVICE=disable
+	XDM_change_settings $1 $2 $3 $4 $5 $6 $7 $8
+	write_config
+}
+
+XDM_install()
+{	
+	echo "installing latest Version of XDM"
+	
+	if [ ! -e "$INSTALLDIR" ]; then 
+		mkdir -p $INSTALLDIR
+    fi
+	if [ ! -e "$DATADIR" ]; then 
+		mkdir -p $DATADIR
+    fi
+	
+	if [ -e ""$DATADIR"/version.txt" ]; then 
+		rm ""$DATADIR"/version.txt"
+	fi
+
+	cd /tmp
+	env GIT_SSL_NO_VERIFY=true git clone -b master https://github.com/lad1337/XDM XDM
+	cp -Rfu /tmp/XDM/* $INSTALLDIR
+	cd /tmp/XDM/
+	git rev-parse HEAD > "$DATADIR"/version.txt
+	rm -Rf /tmp/XDM
+	
+	chown -R $RUNAS:users "$INSTALLDIR" "$DATADIR"
+}
+
+XDM_storagesize() 
+{
+	if [ $1 ] && [ $2 ]; then
+		if [ -d $1 ]; then
+			INST=`du -sh $1 | cut -f1`
+		elif [ -f $1 ]; then
+			INST=`ls -lah $1 | awk '{ print $5}'`
+		fi
+	
+		if [ -d $2 ]; then
+			DAT=`du -sh $2 | cut -f1`
+		elif [ -f $2 ]; then
+			DAT=`ls -lah $2 | awk '{ print $5}'`
+		fi
+		
+		if [ $1 == $2 ]; then
+			echo "<p style="margin-left:10px\;">Storage memory usage: install + data directory: <b>$INST</b></p>"
+		else
+			echo "<p style="margin-left:10px\;">Storage memory usage: install directory: <b>$INST</b>, data directory: <b>$DAT</b></p>"
+		fi
+	elif [ $1 ]; then
+		if [ -d $1 ]; then
+			INST=`du -sh $1 | cut -f1`
+		elif [ -f $1 ]; then
+			INST=`ls -lah $1 | awk '{ print $5}'`
+		fi
+		echo "<p style="margin-left:10px\;">Storage memory usage: <b>$INST</b></p>"
+	fi
+}
+
+XDM_datacheck() 
+{
+	array=( ramfs proc tempfs sysfs )
+	fs=$( stat -f -c '%T' $DATADIR )
+	for i in "${array[@]}"
+	do
+		if [ $i = $fs ]; then
+		    echo "<p style="color:red\;margin-left:10px\;"><b>WARNING:</b> Your Data Directory is not persistent and WILL NOT survive a reboot. Please locate Data Directory on disk for persistency</p>"
+			break
+		elif [ $i = msdos ]; then
+			echo "<p style="color:red\;margin-left:10px\;"><b>WARNING:</b> Your Data Directory is located on your flash drive. This will decrease your flash drives life span!</p>"
+			break
+		else
+			echo "<p style="color:green\;margin-left:10px\;">Your data will persist after a reboot</p>"
+			break
+		fi
+	done
+}
+
+XDM_updateplg()
+{
+	cd /boot/config/plugins
+	if [ -f XDM_UNleashed.plg ]; then
+	[ -f XDM_UNleashed.plg.old ] && rm -f XDM_UNleashed.plg.old
+	mv XDM_UNleashed.plg XDM_UNleashed.plg.old
+	echo "Updating plugin"
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/XDM_UNleashed.plg
+	/usr/local/sbin/installplg /boot/config/plugins/XDM_UNleashed.plg
+	else
+	echo "Updating plugin"
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/XDM_UNleashed.plg
+	/usr/local/sbin/installplg /boot/config/plugins/XDM_UNleashed.plg
+	fi
+}
+XDM_downgradeplg()
+{
+	cd /boot/config/plugins
+	if [ -f XDM_UNleashed.plg.old ]; then
+	rm -f /XDM_UNleashed.plg
+	mv XDM_UNleashed.plg.old XDM_UNleashed.plg
+	echo "downgrading plugin"
+	/usr/local/sbin/installplg /boot/config/plugins/XDM_UNleashed.plg
+	fi
+}
+XDM_vercheck()
+{	
+	XDM_curversion=`cat $DATADIR/version.txt`
+	echo "$XDM_curversion"
+}
+
+# read our configuration
+source /boot/config/plugins/XDM/XDM.cfg
+
+case "$1" in
+	'start')
+		XDM_start
+	;;
+	'stop')
+		XDM_stop
+	;;
+	'restart')
+		XDM_restart
+	;;
+	'enable')
+		XDM_enable $2 $3 $4 $5 $6 $7 $8
+	;;
+	'disable')
+		XDM_disable $2 $3 $4 $5 $6 $7 $8
+	;;
+	'install')
+		XDM_install
+	;;
+	'update')
+		XDM_update
+	;;
+	'storagesize')
+		XDM_storagesize $2 $3
+	;;
+	'datacheck')
+		XDM_datacheck
+	;;
+	'updateplg')
+		XDM_updateplg
+	;;
+	'downgradeplg')
+		XDM_downgradeplg
+	;;
+	'buttonstart')
+		XDM_buttonstart
+	;;
+	'vercheck')
+		XDM_vercheck
+	;;
+	*)
+		echo "usage $0 start|stop|restart|enable|disable|install|update|datacheck|updateplg|downgradeplg"
+esac
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/usr/local/emhttp/plugins/XDM/XDM.page">
+<INLINE>
+<![CDATA[
+Menu="UNleashed"
+Icon="XDM.png"
+Version="0.2"
+Author="Thraxis"
+Type="php"
+Title="XDM"
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/usr/local/emhttp/plugins/XDM/XDM.png">
+<LOCAL>/boot/config/plugins/XDM/XDM.png</LOCAL>
+</FILE>
+
+<FILE Name="/usr/local/emhttp/plugins/XDM/device_status.png">
+<LOCAL>/boot/config/plugins/images/device_status.png</LOCAL>
+</FILE>
+
+<FILE Name="/usr/local/emhttp/plugins/XDM/new_config.png">
+<LOCAL>/boot/config/plugins/images/new_config.png</LOCAL>
+</FILE>
+
+<FILE Name="/usr/local/emhttp/plugins/XDM/information.png">
+<LOCAL>/boot/config/plugins/images/information.png</LOCAL>
+</FILE>
+<FILE Name="/usr/local/emhttp/plugins/XDM/XDM.php">
+<INLINE>
+<![CDATA[
+<?PHP
+$XDM_cfg = parse_ini_file( "/boot/config/plugins/XDM/XDM.cfg");
+$XDM_installed = file_exists( $XDM_cfg["INSTALLDIR"] . "/XDM.py" ) ? "yes" : "no";
+$XDM_rollback = file_exists( "/boot/config/plugins/XDM_UNleashed.plg.old" ) ? "yes" : "no";
+if ($XDM_installed=="yes")
+{
+	if ($XDM_cfg[PLG_STORAGESIZE]=="yes")
+		$XDM_datasize = shell_exec ( "/etc/rc.d/rc.XDM storagesize $XDM_cfg[INSTALLDIR] $XDM_cfg[DATADIR]" );
+	if ($XDM_cfg[PLG_DATACHECK]=="yes")
+		$XDM_datacheck = shell_exec ( "/etc/rc.d/rc.XDM datacheck" );
+	$XDM_plgver = shell_exec ( "cat /boot/config/plugins/XDM/plgver.txt" );
+	$XDM_running = file_exists( "/var/run/XDM/XDM-".$XDM_cfg['PORT'].".pid") ? "yes" : "no";
+	if (file_exists($XDM_cfg["INSTALLDIR"] . "/XDM.py"))
+		$XDM_curversion = shell_exec( "cat $XDM_cfg[DATADIR]/version.txt" );
+	else
+		$XDM_curversion = "Update at the bottom of the XDM web page first"; 
+	$XDM_newversion = shell_exec( "cd /tmp/ && wget -q -O feed.atom --no-check-certificate https://github.com/evilhero/XDM/commits/master.atom && cat feed.atom | sed -n 's|tag:github.com,2008:Grit::Commit/\(.*\)|\\1|p' | sed '1q;d' | cut -d' ' -f5- | sed 's/....\(.*\)...../\\1/' && rm feed.atom" );		
+	$XDM_installdirsize = trim(shell_exec( "if [ -e $XDM_cfg[INSTALLDIR] ]; then du -sh $XDM_cfg[INSTALLDIR] | cut -f1; else echo 0; fi"));
+	$XDM_datadirsize = trim(shell_exec( "if [ -e $XDM_cfg[DATADIR] ]; then du -sh $XDM_cfg[DATADIR] | cut -f1; else echo 0; fi" ));
+}
+?>
+<div style="width: 49%; float:left">
+	<div id="title">
+		<span class="left">Status:&#32;<img src='/plugins/XDM/device_status.png'>
+			<?if ($XDM_installed=="yes"):?>	
+				<?if ($XDM_running=="yes"):?>
+					<a href="http://<?=$var['NAME'];?>:<?=$XDM_cfg['PORT'];?>" target="_blank"><span class="green"><b>RUNNING</b></span></a><span style="font-size:12px;"> with version: <b><?=$XDM_curversion?></b></span>
+				<?else:?>
+					<span class="red"><b>STOPPED</b></span>
+				<?endif;?>
+			<?else:?>
+				<span class="red"><b>NOT INSTALLED</b></span>
+			<?endif;?>	
+		</span>
+	</div>	
+	<?if ($XDM_installed=="yes"):?>
+		<?if ($XDM_running=="yes"):?>
+			<div style="position:relative;float:left;width:50%;text-align:right; margin-bottom:24px">
+				<form name="XDM_start_stop" method="POST" action="/update.htm" target="progressFrame">
+					<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM stop">
+					<input type="submit" name="runCmd" value="Stop">
+				</form>
+			</div>
+			<div style="position:relative;float:left;width:50%;margin-bottom:24px">
+				<form name="XDM_restart" method="POST" action="/update.htm" target="progressFrame">
+					<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM restart">
+					<input type="submit" name="runCmd" value="Restart">
+				</form>
+			</div>			
+		<?else:?>
+			<div style="position:relative;float:left;width:100%;text-align:center;margin-bottom:24px">
+				<form name="XDM_buttonstart" method="POST" action="/update.htm" target="progressFrame">
+					<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM buttonstart">
+					<input type="submit" name="runCmd" value="Start">
+				</form>
+			</div>
+		<?endif;?>
+	<?else:?>
+		<div style="position:relative;float:left;width:100%;text-align:center;margin-bottom:24px">
+			<form name="XDM_install" method="POST" action="/update.htm" target="progressFrame">
+				<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM install">			
+				<input type="submit" name="runCmd" value="Install">
+			</form>
+		</div>
+	<?endif;?>
+	<? if ($XDM_rollback=="yes"): ?>
+	<div style="position:relative;float:left;width:50%;text-align:right;margin-bottom:24px">
+			<form name="XDM_update1" method="POST" action="/update.htm" target="progressFrame">
+					<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM updateplg">
+					<input type="submit" name="runCmd" value="Update PLG">
+			</form>
+	</div>
+	<div style="position:relative;float:left;width:50%;text-align:left;margin-bottom:24px">
+		<form name="XDM_downgrade" method="POST" action="/update.htm" target="progressFrame">
+					<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM downgradeplg">
+					<input type="submit" name="runCmd" value="Downgrade PLG">
+			</form>
+	</div>
+	<?else:?>
+	<div style="position:relative;float:left;width:100%;text-align:center;margin-bottom:24px">
+			<form name="XDM_update" method="POST" action="/update.htm" target="progressFrame">
+				<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM updateplg">			
+				<input type="submit" name="runCmd" value="Update PLG">
+			</form>
+		</div>
+	<?endif;?><br/>
+	<? if ($XDM_installed=="yes"): ?>	
+		<center><hr size="3" width="50%" color="grey"></center>
+		<p style="margin-left:10px;">XDM is installed with version: <?=$XDM_curversion;?></p>
+		<? if ($XDM_cfg[PLG_STORAGESIZE]=="yes"): ?>
+			<?=$XDM_datasize?>
+		<? endif; ?>
+		<? if ($XDM_cfg[PLG_DATACHECK]=="yes"): ?>
+			<?=$XDM_datacheck?>
+		<? endif; ?>
+		<p style="margin-left:10px;"><b>Plug-in Version: <?=$XDM_plgver;?></b></p>
+		<? if (strcmp($XDM_curversion, $XDM_newversion)!=0 && $XDM_curversion!="Update at the bottom of the XDM web page first"): ?>
+			<center>
+				<form name="XDM_settings" method="POST" action="/update.htm" target="progressFrame">
+					<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM update">
+					<p style="color:blue;margin-left:10px;">Update available to version: <b><?=$XDM_newversion;?></b></p>
+					<hr size="3" width="50%" color="grey" style="margin-bottom:15px">
+					<input type="submit" name="runCmd" value="Update">
+				</form>	 
+			</center>
+		<? endif; ?>
+	<? endif; ?>
+</div>
+<div style="width: 49%; float:right">
+	<div id="title">
+		<span class="left">Configuration:&#32;<img src='/plugins/XDM/new_config.png'></span>
+	</div>
+	<form name="XDM_settings" method="POST" action="/update.htm" target="progressFrame">
+		<input type="hidden" name="cmd" value="/etc/rc.d/rc.XDM">
+		<table class="settings">
+			<tr>
+				<td>Enable XDM:</td>
+				<td>
+					<select name="arg1" size="1">
+						<?=mk_option($XDM_cfg['SERVICE'], "disable", "No");?>
+						<?=mk_option($XDM_cfg['SERVICE'], "enable", "Yes");?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Install directory:</td>
+				<td><input type="text" name="arg4" maxlength="60" value="<?=$XDM_cfg['INSTALLDIR'];?>"></td>
+			</tr>
+			<tr>
+				<td>Data directory:</td>
+				<td><input type="checkbox" name="use_data" <?=($XDM_cfg['DATADIR']!=$XDM_cfg['INSTALLDIR'])?"checked=\"checked\"":"";?> onChange="checkDATADIR(this.form);"> <input type="text" name="arg5" style="width:86%" maxlength="60" value="<?=$XDM_cfg['DATADIR'];?>"></td>
+			</tr>
+			<tr>
+				<td>Port:</td>
+				<td><input type="text" name="arg3" maxlength="40" value="<?=$XDM_cfg['PORT'];?>"></td>
+			</tr>
+			<tr>
+				<td>Run as user:</td>
+				<td>
+					<select name="runas" size="1" onChange="checkUSER(this.form);">
+						<?=mk_option($XDM_cfg['RUNAS'], "nobody", "nobody");?>
+						<?=mk_option($XDM_cfg['RUNAS'], "root", "root");?>
+						<option value='other'<?=($XDM_cfg['RUNAS'] != "root" && $XDM_cfg['RUNAS'] != "nobody")?" selected=yes":"" ;?>>other</option>
+					</select>
+					<input type="hidden" name="arg2" style="width:66%" maxlength="40" value="<?=$XDM_cfg['RUNAS'];?>">
+				</td>
+			</tr>
+			<tr><td>---</td></tr>
+			<tr>
+				<td>Show storage memory usage:</td>
+				<td>
+					<select name="storagesize" size="1" onChange="checkSTORAGE(this.form);">
+						<?=mk_option($XDM_cfg['PLG_STORAGESIZE'], "yes", "Yes");?>
+						<?=mk_option($XDM_cfg['PLG_STORAGESIZE'], "no", "No");?>
+					</select>
+					<input type="hidden" name="arg6" value="<?=$XDM_cfg['PLG_STORAGESIZE'];?>">
+				</td>
+			</tr>
+			<tr>
+				<td>Show data persistency information:</td>
+				<td>
+					<select name="datacheck" size="1" onChange="checkDATA(this.form);">
+						<?=mk_option($XDM_cfg['PLG_DATACHECK'], "yes", "Yes");?>
+						<?=mk_option($XDM_cfg['PLG_DATACHECK'], "no", "No");?>
+					</select>
+					<input type="hidden" name="arg7" value="<?=$XDM_cfg['PLG_DATACHECK'];?>">
+				</td>
+			</tr>
+		</table>
+		<div align="center">
+			<hr size="3" align="center" width="75%" color="grey" style="margin-top:20px;margin-bottom:18px" >
+			<input type="submit" name="runCmd" value="Apply" style="margin-bottom:35px">
+			<button type="button" style="margin-bottom:35px" onClick="done();">Done</button>
+		</div>
+	</form>
+	<br />
+</div>
+<script type="text/javascript">
+
+function checkUSER(form)
+{
+	if (form.runas.selectedIndex < 2 )
+	{
+		form.arg2.value = form.runas.options[form.runas.selectedIndex].value;
+		form.arg2.type = "hidden";
+	}
+	else
+	{
+		form.arg2.value = "<?=$XDM_cfg['RUNAS'];?>";
+		form.arg2.type = "text";
+	}
+}
+
+function checkDATADIR(form)
+{
+	if (form.use_data.checked == false )
+	{
+		form.arg5.value = form.arg4.value;;
+		form.arg5.type = "hidden";
+	}
+	else
+	{
+		form.arg5.value = "<?=$XDM_cfg['DATADIR'];?>";
+		form.arg5.type = "text";
+	}
+}
+
+function checkSTORAGE(form)
+{
+	form.arg6.value = form.storagesize.options[form.storagesize.selectedIndex].value;
+}
+
+function checkDATA(form)
+{
+	form.arg7.value = form.datacheck.options[form.datacheck.selectedIndex].value;
+}
+checkINSTALLDIR(document.XDM_settings);
+checkUSER(document.XDM_settings);
+checkDATADIR(document.XDM_settings);
+checkSTORAGE(document.XDM_settings);
+checkDATA(document.XDM_settings);
+</script>
+]]>
+</INLINE>
+</FILE>
+
+<!-- event handler -->
+<FILE Name="/usr/local/emhttp/plugins/XDM/event/disks_mounted" Mode="0770">
+<INLINE>
+<![CDATA[
+#!/bin/bash
+source /boot/config/plugins/XDM/XDM.cfg
+if [ $SERVICE = enable ]; then
+/etc/rc.d/rc.XDM start
+fi
+]]>
+</INLINE>
+</FILE>
+
+<!-- event handler -->
+<FILE Name="/usr/local/emhttp/plugins/XDM/event/unmounting_disks" Mode="0770">
+<INLINE>
+<![CDATA[
+#!/bin/bash
+/etc/rc.d/rc.XDM stop
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/tmp/XDM-install" Run="/bin/bash">
+<INLINE>
+<![CDATA[
+# include our config vars
+source /boot/config/plugins/XDM/XDM.cfg
+
+# creat link for libcrypto.so.1 for GIT
+ln /lib/libcrypto.so.0.9.8 /lib/libcrypto.so.1
+
+# create XDM-writable directory for pid file
+if [ ! -e /var/run/XDM ]; then
+  mkdir /var/run/XDM
+  chown $RUNAS:users /var/run/XDM
+  chmod 0777 /var/run/XDM
+fi
+rm /tmp/XDM-install
+]]>
+</INLINE>
+</FILE>
+
+<FILE Name="/var/log/plugins/XDM">
+<INLINE>
+<![CDATA[
+
+]]>
+</INLINE>
+</FILE>
+
+</PLUGIN>
