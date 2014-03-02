@@ -80,7 +80,7 @@ PLG_DATACHECK="yes"
 </INLINE>
 </FILE>
 
-<FILE Name="/usr/local/emhttp/plugins/webGui/unleashed.page">
+<FILE Name="/usr/local/emhttp/plugins/webGui/UNleashed.page">
 <INLINE>
 <![CDATA[
 Author="Thraxis"
@@ -444,7 +444,7 @@ if ($XDM_installed=="yes")
 		$XDM_curversion = shell_exec( "cat $XDM_cfg[DATADIR]/version.txt" );
 	else
 		$XDM_curversion = "Update at the bottom of the XDM web page first"; 
-	$XDM_newversion = shell_exec( "cd /tmp/ && wget -q -O feed.atom --no-check-certificate https://github.com/evilhero/XDM/commits/master.atom && cat feed.atom | sed -n 's|tag:github.com,2008:Grit::Commit/\(.*\)|\\1|p' | sed '1q;d' | cut -d' ' -f5- | sed 's/....\(.*\)...../\\1/' && rm feed.atom" );		
+	$XDM_newversion = shell_exec( "cd /tmp/ && wget -q -O feed.atom --no-check-certificate https://github.com/lad1337/XDM/commits/master.atom && cat feed.atom | sed -n 's|tag:github.com,2008:Grit::Commit/\(.*\)|\\1|p' | sed '1q;d' | cut -d' ' -f5- | sed 's/....\(.*\)...../\\1/' && rm feed.atom" );		
 	$XDM_installdirsize = trim(shell_exec( "if [ -e $XDM_cfg[INSTALLDIR] ]; then du -sh $XDM_cfg[INSTALLDIR] | cut -f1; else echo 0; fi"));
 	$XDM_datadirsize = trim(shell_exec( "if [ -e $XDM_cfg[DATADIR] ]; then du -sh $XDM_cfg[DATADIR] | cut -f1; else echo 0; fi" ));
 }

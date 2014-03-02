@@ -117,7 +117,7 @@ port = 8081
 <FILE Name="/usr/local/emhttp/plugins/webGui/UNleashed.page">
 <INLINE>
 <![CDATA[
-Author="Influencer"
+Author="Thraxis"
 Version="1.0.0"
 Title="UNleashed PLG"
 Menu="Settings"
