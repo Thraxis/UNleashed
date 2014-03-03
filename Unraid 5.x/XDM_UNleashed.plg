@@ -23,7 +23,7 @@ All dependencies are installed as needed and everything is controlable from the 
 <URL>http://slackware.cs.utah.edu/pub/slackware/slackware-13.37/patches/packages/openssl-0.9.8y-i486-1_slack13.37.txz</URL>
 <MD5>5195be05b85f5eb2bd4bf9ebf0a73ff9</MD5>
 </FILE>
-<FILE Name="/boot/packages/curl-7.35.0-i486-1_slack13.37" Run="upgradepkg --install-new">
+<FILE Name="/boot/packages/curl-7.35.0-i486-1_slack13.37.txz" Run="upgradepkg --install-new">
 <URL>http://slackware.cs.utah.edu/pub/slackware/slackware-13.37/patches/packages/curl-7.35.0-i486-1_slack13.37.txz</URL>
 <MD5>0462c2439896e16dae20e4838f2e770b</MD5>
 </FILE>
