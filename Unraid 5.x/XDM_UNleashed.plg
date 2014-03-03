@@ -33,16 +33,16 @@ All dependencies are installed as needed and everything is controlable from the 
 </FILE>
 
 <FILE Name="/boot/config/plugins/XDM/XDM.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/xdm.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/xdm.png</URL>
 </FILE>
 <FILE Name="/boot/config/plugins/images/device_status.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/device_status.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/device_status.png</URL>
 </FILE>
 <FILE Name="/boot/config/plugins/images/new_config.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/new_config.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/new_config.png</URL>
 </FILE>
 <FILE Name="/boot/config/plugins/images/information.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/information.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/information.png</URL>
 </FILE>
 
 <!-- clean up previous install -->
@@ -323,11 +323,11 @@ XDM_updateplg()
 	[ -f XDM_UNleashed.plg.old ] && rm -f XDM_UNleashed.plg.old
 	mv XDM_UNleashed.plg XDM_UNleashed.plg.old
 	echo "Updating plugin"
-	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/Unraid%205.x/XDM_UNleashed.plg
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/Unraid%205.x/XDM_UNleashed.plg
 	/usr/local/sbin/installplg /boot/config/plugins/XDM_UNleashed.plg
 	else
 	echo "Updating plugin"
-	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/Unraid%205.x/XDM_UNleashed.plg
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/Unraid%205.x/XDM_UNleashed.plg
 	/usr/local/sbin/installplg /boot/config/plugins/XDM_UNleashed.plg
 	fi
 }
@@ -402,7 +402,7 @@ esac
 <![CDATA[
 Menu="UNleashed"
 Icon="XDM.png"
-Version="0.2"
+Version="1.0"
 Author="Thraxis"
 Type="php"
 Title="XDM"

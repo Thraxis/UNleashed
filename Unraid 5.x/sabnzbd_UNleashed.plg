@@ -44,16 +44,16 @@ I have probably missed some credits here, not intentional but I do not have a pe
 <MD5>c5a5550888ae009531f133a33ed85be7</MD5>
 </FILE>
 <FILE Name="/boot/config/plugins/sabnzbd/sabnzbd.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/sabnzbd.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/sabnzbd.png</URL>
 </FILE>
 <FILE Name="/boot/config/plugins/images/device_status.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/device_status.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/device_status.png</URL>
 </FILE>
 <FILE Name="/boot/config/plugins/images/new_config.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/new_config.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/new_config.png</URL>
 </FILE>
 <FILE Name="/boot/config/plugins/images/information.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/Development/images/information.png</URL>
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/information.png</URL>
 </FILE>
 
 <!-- clean up previous install -->
@@ -399,11 +399,11 @@ sabnzbd_updateplg()
 	if [ -f sabnzbd_UNleashed.plg ]; then
 	mv sabnzbd_UNleashed.plg sabnzbd_UNleashed.plg.old
 	echo "Updating plugin"
-	wget -q --no-check-certificate https://github.com/Influencer/UNleashed/raw/master/sabnzbd_UNleashed.plg
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/sabnzbd_UNleashed.plg
 	/usr/local/sbin/installplg /boot/config/plugins/sabnzbd_UNleashed.plg
 	else
 	echo "Updating plugin"
-	wget -q --no-check-certificate https://github.com/Influencer/UNleashed/raw/master/sabnzbd_UNleashed.plg
+	wget -q --no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/sabnzbd_UNleashed.plg
 	/usr/local/sbin/installplg /boot/config/plugins/sabnzbd_UNleashed.plg
 	fi
 }
@@ -501,8 +501,8 @@ esac
 <![CDATA[
 Menu="UNleashed"
 Icon="sabnzbd.png"
-Version="1.1"
-Author="Benjamin Waller; Influencer; Wojciech Walaszek"
+Version="1.2"
+Author="Benjamin Waller; Influencer; Wojciech Walaszek; Thraxis"
 Type="php"
 Title="SABnzbd"
 ]]>
