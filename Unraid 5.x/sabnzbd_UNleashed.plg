@@ -18,6 +18,15 @@ I have probably missed some credits here, not intentional but I do not have a pe
 <URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/sabnzbd.png</URL>
 </FILE>
 
+<FILE Name="/boot/config/plugins/images/device_status.png">
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/device_status.png</URL>
+</FILE>
+<FILE Name="/boot/config/plugins/images/new_config.png">
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/new_config.png</URL>
+</FILE>
+<FILE Name="/boot/config/plugins/images/information.png">
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/information.png</URL>
+</FILE>
 
 <!-- clean up previous install -->
 <FILE Name="/tmp/sabnzbd-cleanup" Run="/bin/bash">

@@ -11,7 +11,15 @@ All dependencies are installed as needed and everything is controlable from the 
 <FILE Name="/boot/config/plugins/XDM/XDM.png">
 <URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/xdm.png</URL>
 </FILE>
-
+<FILE Name="/boot/config/plugins/images/device_status.png">
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/device_status.png</URL>
+</FILE>
+<FILE Name="/boot/config/plugins/images/new_config.png">
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/new_config.png</URL>
+</FILE>
+<FILE Name="/boot/config/plugins/images/information.png">
+<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/information.png</URL>
+</FILE>
 
 <!-- clean up previous install -->
 <FILE Name="/tmp/XDM-cleanup" Run="/bin/bash">

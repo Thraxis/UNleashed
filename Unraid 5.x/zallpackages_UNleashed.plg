@@ -43,16 +43,6 @@
 <MD5>c5a5550888ae009531f133a33ed85be7</MD5>
 </FILE>
 
-<!--  Shared Images -->
-<FILE Name="/boot/config/plugins/images/device_status.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/device_status.png</URL>
-</FILE>
-<FILE Name="/boot/config/plugins/images/new_config.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/new_config.png</URL>
-</FILE>
-<FILE Name="/boot/config/plugins/images/information.png">
-<URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/information.png</URL>
-</FILE>
 
 <FILE Name="/boot/config/plugins/allpackages/plgver.txt">
 <INLINE>
