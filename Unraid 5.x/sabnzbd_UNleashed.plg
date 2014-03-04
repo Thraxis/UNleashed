@@ -3,7 +3,7 @@
 
 <!--
 This Plugin installs and controls SABnzbd+ for UnRaid.
-All dependencies are installed as needed and everything is controlable from the webgui
+All dependencies are installed as needed and everything is controllable from the webgui
 Also this plugin enables easy updates for SABnzbd, since the app doesn't have it's own update routine
 
 Credits:
@@ -14,38 +14,10 @@ WW: Install & Data Directory size, some config page formatting.
 I have probably missed some credits here, not intentional but I do not have a perfect memory!
 -->
 
-
-<FILE Name="/boot/packages/python-2.7.3-i686-5PTr.txz" Run="upgradepkg --install-new">
-<URL>--no-check-certificate https://copy.com/8Zye0EQw7L6sy72K/unrad-generic/python-2.7.3-i686-5PTr.txz</URL>
-<MD5>644b5f3f14e76aaa5b43f01a50d8defa</MD5>
-</FILE>
-<FILE Name="/boot/packages/sqlite-3.7.16-i686-1PTr.txz" Run="upgradepkg --install-new">
-<URL>--no-check-certificate https://copy.com/8Zye0EQw7L6sy72K/unrad-generic/sqlite-3.7.16-i686-1PTr.txz</URL>
-<MD5>104865e791d032e91a85d9c134b21be1</MD5>
-</FILE>
-<FILE Name="/boot/packages/unrar-5.0.14-i486-1cf.txz" Run="upgradepkg --install-new">
-<URL>--no-check-certificate http://dl.bintray.com/darkside401/unrar5-unraid/unrar-5.0.14-i486-1cf.txz</URL>
-<MD5>0e93fb29caab9db35d3ebfbf455ffc50</MD5>
-</FILE>
-<FILE Name="/boot/packages/infozip-6.0-i486-1.txz" Run="upgradepkg --install-new">
-<URL>--no-check-certificate https://copy.com/8Zye0EQw7L6sy72K/unrad-generic/infozip-6.0-i686-4PTr.txz</URL>
-<MD5>96f87543dac7654fa65407c3205a7311</MD5>
-</FILE>
-<FILE Name="/boot/packages/openssl-0.9.8y-i486-1_slack13.37.txz" Run="upgradepkg --install-new">
-<URL>http://slackware.cs.utah.edu/pub/slackware/slackware-13.37/patches/packages/openssl-0.9.8y-i486-1_slack13.37.txz</URL>
-<MD5>5195be05b85f5eb2bd4bf9ebf0a73ff9</MD5>
-</FILE>
-<FILE Name="/boot/packages/pyopenssl-0.11-i486-1alien.tgz" Run="upgradepkg --install-new">
-<URL>http://connie.slackware.com/~alien/slackbuilds/pyopenssl/pkg/13.37/pyopenssl-0.11-i486-1alien.tgz</URL>
-<MD5>e02b8f7ff139e51c101721440068c455</MD5>
-</FILE>
-<FILE Name="/boot/packages/par2cmdline_tbb-0.4-i486-1kh.tgz" Run="upgradepkg --install-new">
-<URL>http://unraid-greenleaf-repository.googlecode.com/files/par2cmdline_tbb-0.4-i486-1kh.tgz</URL>
-<MD5>c5a5550888ae009531f133a33ed85be7</MD5>
-</FILE>
 <FILE Name="/boot/config/plugins/sabnzbd/sabnzbd.png">
 <URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/sabnzbd.png</URL>
 </FILE>
+
 <FILE Name="/boot/config/plugins/images/device_status.png">
 <URL>--no-check-certificate https://github.com/Thraxis/UNleashed/raw/master/images/device_status.png</URL>
 </FILE>
@@ -100,7 +72,7 @@ rm /tmp/checkconfig
 <FILE Name="/boot/config/plugins/sabnzbd/plgver.txt">
 <INLINE>
 <![CDATA[
-2.6.1
+2.6.2
 ]]>
 </INLINE>
 </FILE>
