@@ -1,6 +1,17 @@
 <?xml version='1.0' standalone='yes'?>
 <PLUGIN>
+<!--
+# Required Packages
 
+!required python
+!required sqlite
+!required unrar
+!required infozip
+!required openssl
+!required pyopenssl
+!required par2cmdline
+
+-->
 <!--
 This Plugin installs and controls SABnzbd+ for UnRaid.
 All dependencies are installed as needed and everything is controllable from the webgui

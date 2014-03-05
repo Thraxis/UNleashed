@@ -1,6 +1,17 @@
 <?xml version='1.0' standalone='yes'?>
 <PLUGIN>
 <!--
+# Required Packages
+
+!required python
+!required sqlite
+!required openssl-solibs
+!required openssl
+!required curl
+!required git
+
+-->
+<!--
 
 This Plugin installs and controls XDM for UnRaid.
 All dependencies are installed as needed and everything is controlable from the webgui
